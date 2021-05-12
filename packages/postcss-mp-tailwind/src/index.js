@@ -14,12 +14,23 @@ function isSupportedRule(selector) {
 module.exports = postcss.plugin('postcss-mp-tailwind', (options = {}) => {
   return (root) => {
     root.walkRules((rule) => {
+      if (rule.name === 'media') {
+        rule.remove()
+      }
       if (rule.parent.name === 'media') {
         rule.parent.remove()
       }
 
       if (!isSupportedRule(rule.selector)) {
         rule.remove()
+      }
+
+      if (rule.selector.includes("\\.")) {
+        rule.selector = rule.selector.replaceAll("\\.", "_dot_")
+      }
+
+      if (rule.selector.includes("\\/")) {
+        rule.selector = rule.selector.replaceAll("\\/", "_div_")
       }
     })
   }
